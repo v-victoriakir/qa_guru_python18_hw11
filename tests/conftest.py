@@ -5,6 +5,8 @@ from selene import browser
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+from utils import attach
+
 
 @pytest.fixture(scope="function", autouse=True)
 def browser_config(request):
@@ -27,6 +29,12 @@ def browser_config(request):
     browser.config.base_url = "https://demoqa.com/automation-practice-form"
     browser.config.type_by_js = True
     yield
+
+    attach.add_html(browser)
+    attach.add_screenshot(browser)
+    attach.add_logs(browser)
+    attach.add_video(browser)
+
     browser.quit()
 
     # driver_options = webdriver.ChromeOptions()
