@@ -9,17 +9,19 @@ from selenium.webdriver.chrome.options import Options
 
 from utils import attach
 
-# @pytest.fixture(scope="session", autouse=True)
-# def load_env():
-#     load_dotenv()
-#     selenoid_login = os.getenv("SELENOID_LOGIN")
-#     selenoid_pass = os.getenv("SELENOID_PASS")
-#     selenoid_url = os.getenv("SELENOID_URL")
-#
-#     print(selenoid_login)
+
+@pytest.fixture(scope="session", autouse=True)
+def load_env():
+    load_dotenv()
+
 
 @pytest.fixture(scope="function", autouse=True)
 def browser_config(request):
+    browser.config.base_url = "https://demoqa.com/automation-practice-form"
+    browser.config.window_height = 2500
+    browser.config.window_width = 1400
+    browser.config.type_by_js = True
+
     options = Options()
     selenoid_capabilities = {
         "browserName": "chrome",
@@ -30,14 +32,17 @@ def browser_config(request):
         }
     }
 
+    selenoid_login = os.getenv("SELENOID_LOGIN")
+    selenoid_pass = os.getenv("SELENOID_PASS")
+    selenoid_url = os.getenv("SELENOID_URL")
+
     options.capabilities.update(selenoid_capabilities)
     driver = webdriver.Remote(
-        command_executor=f"https://user1:1234@selenoid.autotests.cloud/wd/hub",
+        command_executor=f"https://{selenoid_login}:{selenoid_pass}@{selenoid_url}/wd/hub",
         options=options)
 
     browser.config.driver = driver
-    browser.config.base_url = "https://demoqa.com/automation-practice-form"
-    browser.config.type_by_js = True
+
     yield
 
     attach.add_html(browser)
@@ -46,13 +51,6 @@ def browser_config(request):
     attach.add_video(browser)
 
     browser.quit()
-
-    # driver_options = webdriver.ChromeOptions()
-    # driver_options.page_load_strategy = "eager"
-    # browser.config.driver_options = driver_options
-    #
-    # browser.config.window_height = 2500
-    # browser.config.window_width = 1400
 
 
 @pytest.fixture(scope="function")
