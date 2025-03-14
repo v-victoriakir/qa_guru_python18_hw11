@@ -5,7 +5,7 @@ class PracticeFormPage:
     def __init__(self, browser):
         self.browser = browser
         self.base_path = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), '..', 'tests', 'resources')
+            os.path.join(os.path.dirname(__file__), '..', 'tests', 'images')
         )
 
     def upload_picture(self, picture):

@@ -14,6 +14,7 @@ from utils import attach
 def load_env():
     load_dotenv()
 
+
 @pytest.fixture(scope="function", autouse=True)
 def browser_config(request):
     browser.config.base_url = "https://demoqa.com/automation-practice-form"
@@ -50,6 +51,7 @@ def browser_config(request):
     attach.add_video(browser)
 
     browser.quit()
+
 
 @pytest.fixture(scope="function")
 def today_date():

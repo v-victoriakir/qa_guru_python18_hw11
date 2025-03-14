@@ -1,12 +1,16 @@
-import os
-
 import allure
+from allure_commons.types import Severity
 from selene import browser, have, command
 
 from pages.practice_form import PracticeFormPage
 
 
-# успешная отправка формы со всеми заполненными полями
+@allure.tag("web")
+@allure.severity(Severity.CRITICAL)
+@allure.label('owner', 'v-victoriakir')
+@allure.feature("Задача по Jenkins")
+@allure.story("Успешная отправка полной формы")
+@allure.link('https://github.com/', 'Testing')
 def test_form_submitted():
     practice_form = PracticeFormPage(browser)
 
@@ -60,7 +64,12 @@ def test_form_submitted():
         browser.element(".table").should(have.text("Rajasthan Jaipur"))
 
 
-# попытка отправки формы только с обяз. полями
+@allure.tag("web")
+@allure.severity(Severity.MINOR)
+@allure.label('owner', 'v-victoriakir')
+@allure.feature("Задача по Jenkins")
+@allure.story("Успешная отправка формы с обязат. полями")
+@allure.link('https://github.com/', 'Testing')
 def test_form_required_fields_only(today_date):
     with allure.step('Open sign-up form'):
         browser.open("/")
@@ -88,7 +97,12 @@ def test_form_required_fields_only(today_date):
         browser.element(".table").should(have.text(""))
 
 
-# попытка отправки формы без заполнения обязательных полей (не отправляем last name & number)
+@allure.tag("web")
+@allure.severity(Severity.NORMAL)
+@allure.label('owner', 'v-victoriakir')
+@allure.feature("Задача по Jenkins")
+@allure.story("Проверка на наличие валидации по заполнению обязательн. полей")
+@allure.link('https://github.com/', 'Testing')
 def test_form_error_required_fields_not_filled():
     with allure.step('Open sign-up form'):
         browser.open("/")
@@ -102,7 +116,12 @@ def test_form_error_required_fields_not_filled():
         browser.element("#userForm").should(have.attribute("class").value("was-validated"))
 
 
-# попытка отправки формы c некорректным полем Mobile
+@allure.tag("web")
+@allure.severity(Severity.BLOCKER)
+@allure.label('owner', 'v-victoriakir')
+@allure.feature("Задача по Jenkins")
+@allure.story("Проверка на наличие валидации в инпуте Mobile")
+@allure.link('https://github.com/', 'Testing')
 def test_form_required_fields_but_wrong_number():
     with allure.step('Open sign-up form'):
         browser.open("/")
