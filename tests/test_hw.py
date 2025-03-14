@@ -3,9 +3,13 @@ import os
 import allure
 from selene import browser, have, command
 
+from pages.practice_form import PracticeFormPage
+
 
 # успешная отправка формы со всеми заполненными полями
 def test_form_submitted():
+    practice_form = PracticeFormPage(browser)
+
     with allure.step('Open sign-up form'):
         browser.open("/")
         browser.driver.execute_script("$('#RightSide_Advertisement').remove()")
@@ -29,9 +33,10 @@ def test_form_submitted():
         ).click()
         browser.element('[for = "hobbies-checkbox-2"]').click()
         browser.element('[for = "hobbies-checkbox-3"]').click()
-        browser.element("#uploadPicture").send_keys(
-            os.path.abspath("../images/unnamed.jpg")
-        )
+        # browser.element("#uploadPicture").send_keys(
+        #     os.path.abspath("../images/unnamed.jpg")
+        # )
+        practice_form.upload_picture('unnamed.jpg')
         browser.element("#currentAddress").type("Main street, 55 bld, 10 apt.")
         browser.element("#state").perform(command.js.scroll_into_view).click().element(
             "#react-select-3-option-3"
