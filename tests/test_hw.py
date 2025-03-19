@@ -1,8 +1,7 @@
 import allure
 from allure_commons.types import Severity
-from selene import browser, have, command
 
-from pages.practice_form import PracticeFormPage
+from model.pages.practice_form import RegistrationPage
 
 
 @allure.tag("web")
@@ -12,56 +11,27 @@ from pages.practice_form import PracticeFormPage
 @allure.story("Успешная отправка полной формы")
 @allure.link('https://github.com/', 'Testing')
 def test_form_submitted():
-    practice_form = PracticeFormPage(browser)
+    practice_form = RegistrationPage()
+    practice_form.open()
 
-    with allure.step('Open sign-up form'):
-        browser.open("/")
-        browser.driver.execute_script("$('#RightSide_Advertisement').remove()")
-
-    with allure.step('Fill the form'):
-        browser.element("#firstName").set_value("Maria")
-        browser.element("#lastName").set_value("Lopez")
-        browser.element("#userEmail").set_value("MLopez@gmail.com")
-        browser.element('[for = "gender-radio-2"]').click()
-        browser.element("#userNumber").set_value("0123456789")
-        browser.element("#dateOfBirthInput").click()
-        browser.element(".react-datepicker__month-select").click().element(
-            'option[value="9"]'
-        ).click()
-        browser.element(".react-datepicker__year-select").click().element(
-            'option[value="1996"]'
-        ).click()
-        browser.element(".react-datepicker__day--010").click()
-        browser.element('[id="subjectsInput"]').set_value("Bio").element(
-            '//*[contains(text(),"Biology")]'
-        ).click()
-        browser.element('[for = "hobbies-checkbox-2"]').click()
-        browser.element('[for = "hobbies-checkbox-3"]').click()
-        # browser.element("#uploadPicture").send_keys(
-        #     os.path.abspath("../images/unnamed.jpg")
-        # )
-        practice_form.upload_picture('unnamed.jpg')
-        browser.element("#currentAddress").type("Main street, 55 bld, 10 apt.")
-        browser.element("#state").perform(command.js.scroll_into_view).click().element(
-            "#react-select-3-option-3"
-        ).click()
-        browser.element("#city").click().element("#react-select-4-option-0").click()
-        browser.element("#submit").click()
-
-    with allure.step('Check the results'):
-        browser.element("#example-modal-sizes-title-lg").should(
-            have.exact_text("Thanks for submitting the form")
-        )
-        browser.element(".table").should(have.text("Maria Lopez"))
-        browser.element(".table").should(have.text("MLopez@gmail.com"))
-        browser.element(".table").should(have.text("Female"))
-        browser.element(".table").should(have.text("0123456789"))
-        browser.element(".table").should(have.text("10 October,1996"))
-        browser.element(".table").should(have.text("Biology"))
-        browser.element(".table").should(have.text("Reading, Music"))
-        browser.element(".table").should(have.text("unnamed.jpg"))
-        browser.element(".table").should(have.text("Main street, 55 bld, 10 apt."))
-        browser.element(".table").should(have.text("Rajasthan Jaipur"))
+    practice_form.fill_first_name("Maria")
+    practice_form.fill_last_name("Lopez")
+    practice_form.fill_email("MLopez@gmail.com")
+    practice_form.select_gender("Female")
+    practice_form.fill_mobile_number("0123456789")
+    practice_form.fill_date_of_birth(9, 1996, 10)
+    practice_form.fill_subject('Biology')
+    practice_form.select_hobbies("Reading")
+    practice_form.select_hobbies("Music")
+    practice_form.upload_avatar("unnamed.jpg")
+    practice_form.fill_current_address("Main street, 55 bld, 10 apt.")
+    practice_form.select_state("Rajasthan")
+    practice_form.select_city("Jaipur")
+    practice_form.submit_form()
+    practice_form.registered_user_should_have(
+        "Maria", "Lopez", "MLopez@gmail.com", "Female", "0123456789", "10 October,1996", "Biology", "Reading, Music",
+        "unnamed.jpg", "Main street, 55 bld, 10 apt.", "Rajasthan", "Jaipur"
+    )
 
 
 @allure.tag("web")
@@ -71,30 +41,17 @@ def test_form_submitted():
 @allure.story("Успешная отправка формы с обязат. полями")
 @allure.link('https://github.com/', 'Testing')
 def test_form_required_fields_only(today_date):
-    with allure.step('Open sign-up form'):
-        browser.open("/")
-
-    with allure.step('Fill the form'):
-        browser.element("#firstName").set_value("Maria")
-        browser.element("#lastName").set_value("Lopez")
-        browser.element('[for = "gender-radio-2"]').click()
-        browser.element("#userNumber").set_value("0123456789")
-        browser.element("#submit").perform(command.js.scroll_into_view).click()
-
-    with allure.step('Check the results'):
-        browser.element("#example-modal-sizes-title-lg").should(
-            have.exact_text("Thanks for submitting the form")
-        )
-        browser.element(".table").should(have.text("Maria Lopez"))
-        browser.element(".table").should(have.text(""))
-        browser.element(".table").should(have.text("Female"))
-        browser.element(".table").should(have.text("0123456789"))
-        browser.element(".table").should(have.text(f"c"))
-        browser.element(".table").should(have.text(""))
-        browser.element(".table").should(have.text(""))
-        browser.element(".table").should(have.text(""))
-        browser.element(".table").should(have.text(""))
-        browser.element(".table").should(have.text(""))
+    practice_form = RegistrationPage()
+    practice_form.open()
+    practice_form.fill_first_name("Maria")
+    practice_form.fill_last_name("Lopez")
+    practice_form.select_gender("Female")
+    practice_form.fill_mobile_number("0123456789")
+    practice_form.submit_form()
+    practice_form.registered_user_should_have(
+        "Maria", "Lopez", "", "Female", "0123456789", f"c", "", "",
+        "", "", "", ""
+    )
 
 
 @allure.tag("web")
@@ -104,16 +61,12 @@ def test_form_required_fields_only(today_date):
 @allure.story("Проверка на наличие валидации по заполнению обязательн. полей")
 @allure.link('https://github.com/', 'Testing')
 def test_form_error_required_fields_not_filled():
-    with allure.step('Open sign-up form'):
-        browser.open("/")
-
-    with allure.step('Fill the form'):
-        browser.element("#firstName").set_value("Maria")
-        browser.element('[for = "gender-radio-2"]').click()
-        browser.element("#submit").perform(command.js.scroll_into_view).click()
-
-    with allure.step('Check the results'):
-        browser.element("#userForm").should(have.attribute("class").value("was-validated"))
+    practice_form = RegistrationPage()
+    practice_form.open()
+    practice_form.fill_first_name("Maria")
+    practice_form.select_gender("Female")
+    practice_form.submit_form()
+    practice_form.check_if_required_fields_not_filled()
 
 
 @allure.tag("web")
@@ -123,15 +76,11 @@ def test_form_error_required_fields_not_filled():
 @allure.story("Проверка на наличие валидации в инпуте Mobile")
 @allure.link('https://github.com/', 'Testing')
 def test_form_required_fields_but_wrong_number():
-    with allure.step('Open sign-up form'):
-        browser.open("/")
-
-    with allure.step('Fill the form'):
-        browser.element("#firstName").set_value("Maria")
-        browser.element("#lastName").set_value("Lopez")
-        browser.element('[for = "gender-radio-2"]').click()
-        browser.element("#userNumber").set_value("123456789")
-        browser.element("#submit").perform(command.js.scroll_into_view).click()
-
-    with allure.step('Check the results'):
-        browser.element("#userForm").should(have.attribute("class").value("was-validated"))
+    practice_form = RegistrationPage()
+    practice_form.open()
+    practice_form.fill_first_name("Maria")
+    practice_form.fill_last_name("Lopez")
+    practice_form.select_gender("Female")
+    practice_form.fill_mobile_number("123456789")
+    practice_form.submit_form()
+    practice_form.check_if_required_fields_not_filled()
