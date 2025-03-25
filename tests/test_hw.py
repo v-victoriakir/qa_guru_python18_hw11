@@ -23,7 +23,7 @@ def test_form_submitted():
     practice_form.fill_subject('Biology')
     practice_form.select_hobbies("Reading")
     practice_form.select_hobbies("Music")
-    practice_form.upload_avatar("unnamed.jpg")
+    practice_form.set_avatar("unnamed.jpg")
     practice_form.fill_current_address("Main street, 55 bld, 10 apt.")
     practice_form.select_state("Rajasthan")
     practice_form.select_city("Jaipur")
