@@ -75,7 +75,7 @@ class RegistrationPage:
         return self
 
     @allure.step("Загрузка аватара")
-    def upload_avatar(self, file_name):
+    def set_avatar(self, file_name):
         self.upload_avatar.set_value(resource.path(file_name))
         return self
 
