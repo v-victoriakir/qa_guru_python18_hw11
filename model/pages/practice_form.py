@@ -16,7 +16,7 @@ class RegistrationPage:
         self.month = browser.element(".react-datepicker__month-select")
         self.year = browser.element(".react-datepicker__year-select")
 
-        self.subject_input = browser.element('[id="subjectsInput"]')
+        self.subject_input = browser.element('#subjectsInput')
         self.hobbies = browser.all('[for^=hobbies-checkbox]')
         self.upload_avatar = browser.element('#uploadPicture')
         self.current_address = browser.element("#currentAddress")
@@ -64,10 +64,16 @@ class RegistrationPage:
 
     @allure.step("Выбор предмета")
     def fill_subject(self, value):
-        self.subject_input.set_value(value).element(
-            f'//*[contains(text(),{value})]'
-        ).click()
+        self.subject_input.send_keys(value).press_enter()
         return self
+
+        # self.subject_input.set_value(value).element(
+        #     f'//*[contains(text(),{value})]'
+        # ).click()
+        # return self
+
+        # self.subject_input.type(value).press_enter()
+        # return self
 
     @allure.step("Выбор хобби")
     def select_hobbies(self, value):
@@ -86,7 +92,7 @@ class RegistrationPage:
 
     @allure.step("Выбор штата")
     def select_state(self, value):
-        self.state.scroll_into_view.click().all('[id^=react-select-3-option]').element_by(
+        self.state.click().all('[id^=react-select-3-option]').element_by(
             have.exact_text(value)).click()
         return self
 
